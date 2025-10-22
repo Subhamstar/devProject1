@@ -1,5 +1,8 @@
 const express=require('express');
 const app=express();
+app.use("/",(req,res)=>{
+    res.send("Hello World from rooot")
+})
 app.use("/user",(req,res,next)=>{
     console.log("!st response");
     // res.send(" Hello World from 1st !! ");
