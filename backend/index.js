@@ -30,7 +30,21 @@ app.get("/feed",async (req,res)=>{
         res.send(user);
     }
     catch(err){
-        res.status(400)
+        res.status(400).send("User not found")
+    }
+})
+
+app.delete("/delete",async(req,res)=>{
+    try{
+        const user=await User.findOneAndDelete({email:req.body.email});
+        if(!user){
+            res.status(400).send("user not found")
+        }
+        else {
+            res.send("User deleted Successfully !! ");
+        }
+    }catch(err){
+        res.status(400).send("user not found || Already deleted !! ")
     }
 })
 
