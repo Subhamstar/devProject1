@@ -5,6 +5,8 @@ const userSchema=new mongoose.Schema({
         type:String,
         required:true,
         trim:true,
+        minLength:3,
+        maxlength:20,
     },
     lastName:{
         type:String,
@@ -13,6 +15,8 @@ const userSchema=new mongoose.Schema({
     email:{
         type:String,
         required:true,
+        lowercase:true,
+        trim:true,
         unique:true,
         validate:{
             validator:validator.isEmail,
@@ -30,12 +34,22 @@ const userSchema=new mongoose.Schema({
     },
     age:{
         type:Number,
+        minLength:18,
     },
     gender:{
         type:String,
+        enum:["male","female","others"],
     },
     skills:{
         type:[String],
+    },
+    about:{
+        type:"String",
+        default:"Aspiring software Engineer !!"
+    },
+    photoURL:{
+        type:"String",
+        default:"https://sincostani.png"
     }
 },{timestamps:true})
 const userModel=mongoose.model("User",userSchema);

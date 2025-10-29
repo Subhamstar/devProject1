@@ -48,6 +48,33 @@ app.delete("/delete",async(req,res)=>{
     }
 })
 
+//update user
+app.patch("/user/:userId",async(req,res)=>{
+    const userId=req.params.userId;
+    const data=req.body;
+    const ALLOWED_UPDATES=["firstName","lastName","about","skills"];
+    const isUpdateAllowed=Object.keys(data).every((k)=>ALLOWED_UPDATES.includes(k));
+    if(!isUpdateAllowed){
+        res.status(400).send("Update is not possible at this field !! ")
+    }
+    if(!data?.skills.length>10){
+        res.status(400).send("skill length must be under 10")
+    }
+    try{
+        const user=await User.findByIdAndUpdate({_id:userId},data,{
+            returnDocument:"after",
+            runValidators:true,
+        });
+        console.log(user);
+        res.send("User Updated Successfully !! ")
+    }
+    catch(err){
+        res.status(400).send("Error while updating data "+err.message);
+    }
+
+})
+
+
 
 conncetDB()
     .then((conn)=>{
