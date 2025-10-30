@@ -3,6 +3,7 @@ const mongoose=require("mongoose")
 const conncetDB=require("./src/config/db");
 const app=express();
 const User=require("./src/models/user")
+const bcrypt=require("bcryptjs")
 
 app.use(express.json());
 
@@ -10,11 +11,12 @@ app.post("/signUp",async (req,res)=>{
     // console.log(req.body);
     try{
         const {firstName,lastName,email,password}=req.body;
+        const hashedPassword=bcrypt.hashSync(password);
         const user=new User({
             firstName,
             lastName,
             email,
-            password,
+            password:hashedPassword,
         })
         await user.save();
         res.send("User Added SuccessFully !! ");    
