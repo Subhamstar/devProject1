@@ -13,3 +13,4 @@ const validateSignUpData=(req)=>{
         throw new Error("please provide password !!")
     }
 }
+module.exports=validateSignUpData;

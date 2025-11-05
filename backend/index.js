@@ -3,15 +3,18 @@ const mongoose=require("mongoose")
 const conncetDB=require("./src/config/db");
 const app=express();
 const User=require("./src/models/user")
-const bcrypt=require("bcryptjs")
-
+const bcrypt=require("bcryptjs");
+const validateSignUpData = require('./src/utils/validator');
+const cookieParser = require('cookie-parser');
+const jwt=require("jsonwebtoken");
 app.use(express.json());
-
-app.post("/signUp",async (req,res)=>{
-    // console.log(req.body);
+app.use(cookieParser());
+app.post("/signup",async (req,res)=>{
+    console.log(req.body);
     try{
+        validateSignUpData(req);
         const {firstName,lastName,email,password}=req.body;
-        const hashedPassword=bcrypt.hashSync(password);
+        const hashedPassword=await bcrypt.hashSync(password,10);
         const user=new User({
             firstName,
             lastName,
@@ -26,6 +29,46 @@ app.post("/signUp",async (req,res)=>{
     }
 })
 
+app.post("/login",async (req,res)=>{
+    try{
+        const{email,password}=req.body;
+        const user=await User.findOne({email:email});
+        if(!user){
+            res.status(400).send("Invalid Credentials !!");
+        }
+        const isValidpassword=await bcrypt.compare(password,user.password);
+        if(isValidpassword){
+            const token=jwt.sign({_id:user._id},"SincosTani");
+            res.cookie("token",token);
+            res.send("Login Sucessfully !!");
+        }
+        else{
+            res.send("nvalid Credentials !!");
+        }
+    }
+    catch(err){
+        res.status(400).send("Error:"+err.message);
+    }
+})
+
+app.get("/profile",async(req,res)=>{
+    try{
+        const {token}=req.cookies;
+        if(!token){
+            throw new Error("Please login again !! ");
+        }
+        const decodedMessage=await jwt.verify(token,"SincosTani");
+        const{_id}=decodedMessage;
+        const user=await User.findById(_id);
+        if(!user){
+            throw new Error("Please login again !!");
+        }
+        res.send(user);
+    }
+    catch(err){
+        res.status(400).send("ERROR :"+err.message);
+    }
+})
 app.get("/feed",async (req,res)=>{
     try{
         const user=await User.find({});
