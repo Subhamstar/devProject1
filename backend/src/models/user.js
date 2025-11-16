@@ -1,5 +1,6 @@
 const mongoose=require("mongoose");
 const validator=require("validator");
+const jwt=require("jsonwebtoken");
 const userSchema=new mongoose.Schema({
     firstName:{
         type:String,
@@ -51,6 +52,18 @@ const userSchema=new mongoose.Schema({
         type:"String",
         default:"https://sincostani.png"
     }
-},{timestamps:true})
+},{timestamps:true});
+
+userSchema.methods.getJWT=async function(){
+    const user=this;
+    const token=await jwt.sign({_id:user._id},"SincosTani",{expiresIn:"7d"});
+    return token;   
+}
+
+userSchema.method.validatePassword=async function(password){
+    const user=this;
+    const isValidate=await bcrypt.compare(password,user.password);
+    return isValidate;
+}
 const userModel=mongoose.model("User",userSchema);
 module.exports=userModel;

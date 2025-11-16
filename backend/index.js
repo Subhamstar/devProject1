@@ -7,6 +7,7 @@ const bcrypt=require("bcryptjs");
 const validateSignUpData = require('./src/utils/validator');
 const cookieParser = require('cookie-parser');
 const jwt=require("jsonwebtoken");
+const userAuth = require('./src/middleware/auth');
 app.use(express.json());
 app.use(cookieParser());
 app.post("/signup",async (req,res)=>{
@@ -36,9 +37,9 @@ app.post("/login",async (req,res)=>{
         if(!user){
             res.status(400).send("Invalid Credentials !!");
         }
-        const isValidpassword=await bcrypt.compare(password,user.password);
+        const isValidpassword=user.validatePassword(password);
         if(isValidpassword){
-            const token=jwt.sign({_id:user._id},"SincosTani");
+            const token=user.getJWT(); 
             res.cookie("token",token);
             res.send("Login Sucessfully !!");
         }
@@ -51,15 +52,9 @@ app.post("/login",async (req,res)=>{
     }
 })
 
-app.get("/profile",async(req,res)=>{
+app.get("/profile", userAuth, async(req,res)=>{
     try{
-        const {token}=req.cookies;
-        if(!token){
-            throw new Error("Please login again !! ");
-        }
-        const decodedMessage=await jwt.verify(token,"SincosTani");
-        const{_id}=decodedMessage;
-        const user=await User.findById(_id);
+        const user=req.user;
         if(!user){
             throw new Error("Please login again !!");
         }
