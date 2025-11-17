@@ -49,17 +49,6 @@ authRouter.post("/login",async (req,res)=>{
     }
 })
 
-authRouter.get("/profile", userAuth, async(req,res)=>{
-    try{
-        const user=req.user;
-        if(!user){
-            throw new Error("Please login again !!");
-        }
-        res.send(user);
-    }
-    catch(err){
-        res.status(400).send("ERROR :"+err.message);
-    }
-})
+
 
 module.exports=authRouter;
