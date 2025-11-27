@@ -66,5 +66,6 @@ userSchema.method.validatePassword=async function(password){
     const isValidate=await bcrypt.compare(password,user.password);
     return isValidate;
 }
+
 const userModel=mongoose.model("User",userSchema);
 module.exports=userModel;

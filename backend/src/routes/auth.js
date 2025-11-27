@@ -5,8 +5,6 @@ const user=require("../models/user");
 const bcrypt=require("bcryptjs");
 const jwt=require("jsonwebtoken");
 const userAuth = require('../middleware/auth');
-
-
 authRouter.post("/signup",async (req,res)=>{
     console.log(req.body);
     try{
