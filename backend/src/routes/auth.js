@@ -5,25 +5,6 @@ const user=require("../models/user");
 const bcrypt=require("bcryptjs");
 const jwt=require("jsonwebtoken");
 const userAuth = require('../middleware/auth');
-authRouter.post("/signup",async (req,res)=>{
-    console.log(req.body);
-    try{
-        validateSignUpData(req);
-        const {firstName,lastName,email,password}=req.body;
-        const hashedPassword=await bcrypt.hashSync(password,10);
-        const user=new User({
-            firstName,
-            lastName,
-            email,
-            password:hashedPassword,
-        })
-        await user.save();
-        res.send("User Added SuccessFully !! ");    
-    }
-    catch(err){
-        res.status(400).send("Error while SignUp data : "+err.message);
-    }
-})
 
 authRouter.post("/login",async (req,res)=>{
     try{
@@ -44,6 +25,25 @@ authRouter.post("/login",async (req,res)=>{
     }
     catch(err){
         res.status(400).send("Error:"+err.message);
+    }
+})
+authRouter.post("/signup",async (req,res)=>{
+    console.log(req.body);
+    try{
+        validateSignUpData(req);
+        const {firstName,lastName,email,password}=req.body;
+        const hashedPassword=await bcrypt.hashSync(password,10);
+        const user=new User({
+            firstName,
+            lastName,
+            email,
+            password:hashedPassword,
+        })
+        await user.save();
+        res.send("User Added SuccessFully !! ");    
+    }
+    catch(err){
+        res.status(400).send("Error while SignUp data : "+err.message);
     }
 })
 
