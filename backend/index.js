@@ -92,10 +92,10 @@ app.delete("/delete",async(req,res)=>{
 app.patch("/user/:userId",async(req,res)=>{
     const userId=req.params.userId;
     const data=req.body;
-    const ALLOWED_UPDATES=["firstName","lastName","about","skills"];
+    const ALLOWED_UPDATES=["firstName","lastName","about","skills","photoURL"];
     const isUpdateAllowed=Object.keys(data).every((k)=>ALLOWED_UPDATES.includes(k));
     if(!isUpdateAllowed){
-        res.status(400).send("Update is not possible at this field !! ")
+        res.status(400).send("Update is not possible in this field !! ")
     }
     if(!data?.skills.length>10){
         res.status(400).send("skill length must be under 10")
